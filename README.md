@@ -3,6 +3,13 @@
 # kafka
 
 
+注意:
+
+- git 项目使用 `git clone https://github.com/hewenyuAndroid/kafka.git` 命令下载项目时，会打包所有分支的文件，当前项目的 dev 分支文件比较大，需要跳过该分支
+- 当前项目涉及的软件在 `dev` 分支
+- 使用: `git clone --single-branch --branch master https://github.com/hewenyuAndroid/kafka.git` 命令，只 clone master 分支的代码，不影响拉取的速度
+- 代码下载到本地后，`git fetch` 命令可以正常使用
+
 
 ## kafka 运行环境安装
 
