@@ -3,35 +3,16 @@
 # kafka
 
 
+1、当前分支是项目涉及的软件
+2、切换分支，下载软件到本地后，文件夹里面的文件是分卷压缩的产物
+3、分卷压缩的文件解压后，需要去掉文件后面的 .1 后缀，即可达到完整的文件
 
-## kafka 运行环境安装
 
-当前虚拟机使用的是 wsl2
+注意:
 
-> jdk 配置
-
-下载地址: https://www.oracle.com/java/technologies/downloads/#java17
-
-```shell
-# 解压 jdk 到指定目录
-tar -zxvf jdk-17_linux-x64_bin.tar.gz -C /usr/local
-
-# 配置 jdk 环境变量
-export JAVA_HOME=/usr/local/jdk-17.0.7
-export PATH=$JAVA_HOME/bin:$PATH
-export CLASSPATH=.:$JAVA_HOME/lib/
-```
-
-> kafka 配置
-
-下载地址: https://kafka.apache.org/downloads
-
-```shell
-# 安装 kafka
-tar -xzf kafka_2.13-3.7.0.tgz -C /usr/local/
-cd kafka_2.13-3.7.0
-```
-
+- git 项目使用 git clone path 命令下载项目时，会打包所有分支的文件，当前项目的 dev 分支文件比较大，需要跳过该分支
+- 使用: `git clone --single-branch --branch master https://github.com/hewenyuAndroid/kafka.git` 命令，只 clone master 分支的代码
+- 代码下载到本地后，git fetch 命令可以正常使用
 
 
 
