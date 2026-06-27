@@ -179,11 +179,19 @@ clientPort=2181
 ./kafka-server-start.sh ../config/server.properties &
 ```
 
+同样可以使用 `ps -ef | grep kafka` 查看 是否启动了 `kafka` 服务
+
+![查看kafka服务是否启动](./imgs/kafka_start_succ_with_zookeeper.png)
+
 #### 3、关闭 `kafka`
 
 ```shell
 ./kafka-server-stop.sh ../config/server.properties
 ```
+
+关闭成功后，可以看到上面的 kafka 进程 (`pid:2384`) 已经没有了;
+
+![kafka进程关闭](./imgs/kafka_stop_succ.png)
 
 #### 4、关闭 `zookeeper`
 
@@ -191,6 +199,9 @@ clientPort=2181
 ./zookeeper-server-stop.sh ../config/zookeeper.properties
 ```
 
+关闭 `zookeeper` 后，可以看到 `zookeeper` 进程 (`pid:1850`) 已经没有了
+
+![zookeeper关闭](./imgs/zookeeper_stop_succ.png)
 
 
 
