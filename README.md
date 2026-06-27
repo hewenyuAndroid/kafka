@@ -13,45 +13,36 @@
 
 - 代码下载到本地后，`git fetch` 命令可以正常使用，但是不会同步 `dev` 分支;
 
-  
 
-  > 如何拉取远程的 dev 分支
-
-  
-
-  方案1:  把 dev 加进跟踪列表（推荐，规范）
-
-  ```shell
-  # 1. 查看当前 remote 的 fetch 配置（应该只有 master）
-  git config --get remote.origin.fetch
-  # 输出类似：+refs/heads/master:refs/remotes/origin/master
-  
-  # 2. 把 dev 也加进跟踪（不会覆盖 master，是追加）
-  git remote set-branches origin dev
-  
-  # 3. 拉取 dev 的数据
-  git fetch origin dev
-  
-  # 4. 切到 dev（本地建一个 tracking 分支）
-  git checkout dev
-  ```
+> 如何拉取远程的 dev 分支
 
   
+方案1:  把 dev 加进跟踪列表（推荐，规范）
 
-  方案2:  "去 origin 拿 dev 的数据，回来在本地建一个也叫 dev 的分支并 track 它"。一步到位，但**不会**把 dev 加进 `remote.origin.fetch`的常驻跟踪列表，以后 `git fetch`（不带参数）还是只拉 master。
-
-  ```sh
-  # 直接从远程 dev 拉下来，并在本地建 dev 分支，耗时操作
-  git fetch origin dev:dev
+```shell
+# 1. 查看当前 remote 的 fetch 配置（应该只有 master）
+git config --get remote.origin.fetch
+# 输出类似：+refs/heads/master:refs/remotes/origin/master
   
-  # 切过去
-  git checkout dev
-  ```
-
+# 2. 把 dev 也加进跟踪（不会覆盖 master，是追加）
+git remote set-branches origin dev
   
-
+# 3. 拉取 dev 的数据
+git fetch origin dev
   
+# 4. 切到 dev（本地建一个 tracking 分支）
+git checkout dev
+```
 
+方案2:  "去 origin 拿 dev 的数据，回来在本地建一个也叫 dev 的分支并 track 它"。一步到位，但**不会**把 dev 加进 `remote.origin.fetch`的常驻跟踪列表，以后 `git fetch`（不带参数）还是只拉 master。
+
+```sh
+# 直接从远程 dev 拉下来，并在本地建 dev 分支，耗时操作
+git fetch origin dev:dev
+  
+# 切过去
+git checkout dev
+```
 
 ## kafka 运行环境安装
 
@@ -116,9 +107,89 @@ drwxr-xr-x  2 root root  4096 Feb  9  2024 licenses
 drwxr-xr-x  2 root root  4096 Feb  9  2024 site-docs
 ```
 
+## 启动运行 kafka
+
+启动运行 kafka 环境时，需要本地安装了 `jdk1.8+`；
+
+`Apache Kafka` 可以使用 `Zookeeper` 或 `KRaft` 启动，启动只能选择其中的一种，不能两种同时使用。
+
+`KRaft` 为 `Apache Kafka` 内置的共识机制，用于取代 `Apache Zookeeper`；
+
+### 使用 `Apache Zookeeper` 启动 `kafka`
+
+`Kafka 3.0+` 内置了 `Zookeeper`
+
+```shell
+hewenyu@hewenyu:/usr/local/kafka_2.13-3.7.0/bin$ pwd
+/usr/local/kafka_2.13-3.7.0/bin
+hewenyu@hewenyu:/usr/local/kafka_2.13-3.7.0/bin$ ls | grep zoo
+zookeeper-security-migration.sh
+# zookeeper 启动脚本
+zookeeper-server-start.sh
+# zookeeper 关闭脚本
+zookeeper-server-stop.sh
+zookeeper-shell.sh
 
 
+hewenyu@hewenyu:/usr/local/kafka_2.13-3.7.0/config$ pwd
+/usr/local/kafka_2.13-3.7.0/config
+hewenyu@hewenyu:/usr/local/kafka_2.13-3.7.0/config$ ls | grep zoo
+# zookeeper 配置文件
+zookeeper.properties
+```
 
+#### 1、启动 `Zookeeper`
+
+```shell
+# 将 zookeeper 服务在后台启动
+./zookeeper-server-start.sh ../config/zookeeper.properties &
+```
+
+`&` 是 `shell` 的后台运行符号，作用如下:
+
+- 让命令在子 `Shell` 中异步执行：`Shell` 会 `fork` 出一个子进程来运行该命令，然后立即返回提示符，不等待命令执行完毕。
+- 不阻塞终端：你可以在同一个终端继续输入其他命令，而 `ZooKeeper` 服务会在后台默默运行。
+- 标准输出/错误仍会打印到当前终端（除非重定向），但你可以继续做其他事。
+
+![zookeeper启动成功](./imgs/zookeeper_start_succ.png)
+
+启动 `zookeeper` 报权限错误时，可以修改当前用户的目录权限:
+
+```shell
+sudo chown -R hewenyu:hewenyu /usr/local/kafka_2.13-3.7.0/
+```
+
+![启动zookeeper权限报错](./imgs/zookeeper_start_fail_permission_denied.png)
+
+zookeeper 启动的默认端口号是 `2181`，可以在 `config/zookeeper.properties` 配置文件中设置
+
+```shell
+...
+# zookeeper 启动的端口号
+clientPort=2181
+...
+```
+
+![zookeeper启动的端口号](./imgs/zookeeper_start_port.png)
+
+#### 2、启动 `kafka`
+
+```shell
+# kafka 同样在后台云运行
+./kafka-server-start.sh ../config/server.properties &
+```
+
+#### 3、关闭 `kafka`
+
+```shell
+./kafka-server-stop.sh ../config/server.properties
+```
+
+#### 4、关闭 `zookeeper`
+
+```shell
+./zookeeper-server-stop.sh ../config/zookeeper.properties
+```
 
 
 
