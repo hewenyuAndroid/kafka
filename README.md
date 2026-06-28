@@ -204,6 +204,32 @@ clientPort=2181
 ![zookeeper关闭](./imgs/zookeeper_stop_succ.png)
 
 
+### 使用 `KRaft` 启动 `kafka`
 
+#### 1、生成 `Cluster UUID` (集群UUID)
 
+```shell
+./kafka-storage.sh random-uuid
+```
+
+#### 2、格式化日志目录
+
+```shell
+# 注意，这里 -t 后面的 uuid 是上面 生成的
+./kafka-storage.sh format -t Vej9AIzrTG2fHUAcq8WnCA -c ../config/kraft/server.properties
+```
+
+![kraft启动kafka](./imgs/kraft_start_kafka_succ.png)
+
+#### 3、启动 `kafka`
+
+```shell
+./kafka-server-start.sh ../config/kraft/server.properties &
+```
+
+#### 4、关闭 `kafka`
+
+```shell
+./kafka-server-stop.sh ../config/kraft/server.properties
+```
 
