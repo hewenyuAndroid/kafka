@@ -233,3 +233,134 @@ clientPort=2181
 ./kafka-server-stop.sh ../config/kraft/server.properties
 ```
 
+
+## `Ubuntu` 安装 `Docker`
+
+
+### 1、如果有旧版本，卸载旧版本
+
+```shell
+sudo apt remove docker docker-engine docker.io containerd runc -y
+sudo apt autoremove -y
+```
+
+### 2、安装 `Docker`
+
+#### 2.1 安装依赖并添加 Docker 官方 APT 源
+
+```shell
+# 安装基础工具
+sudo apt update
+sudo apt install ca-certificates curl gnupg lsb-release -y
+
+# 创建 keyrings 目录
+sudo install -m 0755 -d /etc/apt/keyrings
+
+# 导入 Docker 官方 GPG 密钥
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
+  | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+# 添加 Docker 稳定版仓库
+echo \
+"deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+https://download.docker.com/linux/ubuntu \
+$(lsb_release -cs) stable" \
+| sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# 更新索引
+sudo apt update
+```
+
+![添加 Docker 官方 API 源](./imgs/docker_add_docker_api_source.png)
+
+#### 2.2 查看可用版本
+
+```shell
+apt-cache madison docker-ce
+
+# 命令执行结果如下
+hewenyu@hewenyu:/mnt/c/Users/he875$ apt-cache madison docker-ce
+ docker-ce | 5:29.6.1-1~ubuntu.24.04~noble | https://download.docker.com/linux/ubuntu noble/stable amd64 Packages
+ docker-ce | 5:29.6.0-1~ubuntu.24.04~noble | https://download.docker.com/linux/ubuntu noble/stable amd64 Packages
+ docker-ce | 5:29.5.3-1~ubuntu.24.04~noble | https://download.docker.com/linux/ubuntu noble/stable amd64 Packages
+ docker-ce | 5:29.5.2-1~ubuntu.24.04~noble | https://download.docker.com/linux/ubuntu noble/stable amd64 Packages
+ .....
+ docker-ce | 5:26.0.2-1~ubuntu.24.04~noble | https://download.docker.com/linux/ubuntu noble/stable amd64 Packages
+ docker-ce | 5:26.0.1-1~ubuntu.24.04~noble | https://download.docker.com/linux/ubuntu noble/stable amd64 Packages
+ docker-ce | 5:26.0.0-1~ubuntu.24.04~noble | https://download.docker.com/linux/ubuntu noble/stable amd64 Packages
+```
+
+或使用如下命令
+
+```shell
+apt list -a docker-ce
+
+# 命令执行结果如下
+hewenyu@hewenyu:/mnt/c/Users/he875$ apt list -a docker-ce
+Listing... Done
+docker-ce/noble 5:29.6.1-1~ubuntu.24.04~noble amd64
+docker-ce/noble 5:29.6.0-1~ubuntu.24.04~noble amd64
+docker-ce/noble 5:29.5.3-1~ubuntu.24.04~noble amd64
+....
+docker-ce/noble 5:26.1.4-1~ubuntu.24.04~noble amd64
+docker-ce/noble 5:26.1.3-1~ubuntu.24.04~noble amd64
+docker-ce/noble 5:26.1.2-1~ubuntu.24.04~noble amd64
+docker-ce/noble 5:26.1.1-1~ubuntu.24.04~noble amd64
+docker-ce/noble 5:26.1.0-1~ubuntu.24.04~noble amd64
+docker-ce/noble 5:26.0.2-1~ubuntu.24.04~noble amd64
+docker-ce/noble 5:26.0.1-1~ubuntu.24.04~noble amd64
+docker-ce/noble 5:26.0.0-1~ubuntu.24.04~noble amd64
+```
+
+#### 2.3 安装指定版本 Docker CE
+
+注意: `docker-ce` 和 `docker-ce-cli` 必须指定同一完整版本字符串，其余组件不锁版本取兼容最新即可。
+
+```shell
+# 将 <VERSION_STRING>替换为 2.2 中查到的版本
+sudo apt install -y \
+  docker-ce=<VERSION_STRING> \
+  docker-ce-cli=<VERSION_STRING> \
+  containerd.io \
+  docker-buildx-plugin \
+  docker-compose-plugin
+
+
+# 例如，使用 26.1.4 版本
+sudo apt install -y \
+  docker-ce=5:26.1.4-1~ubuntu.24.04~noble \
+  docker-ce-cli=5:26.1.4-1~ubuntu.24.04~noble \
+  containerd.io \
+  docker-buildx-plugin \
+  docker-compose-plugin
+```
+
+
+#### 2.4 查看 Docker 版本
+
+```shell
+hewenyu@hewenyu:/mnt/c/Users/he875$ docker --version
+Docker version 26.1.4, build 5650f9b
+
+# 或
+hewenyu@hewenyu:/mnt/c/Users/he875$ docker -v
+Docker version 26.1.4, build 5650f9b
+```
+
+#### 2.5 启动 docker 验证
+
+```shell
+sudo systemctl enable docker
+sudo systemctl start docker
+docker version
+sudo docker run hello-world
+```
+
+#### 2.6 锁定版本防止 apt upgrade 自动升级（可选）
+
+```shell
+sudo apt-mark hold docker-ce docker-ce-cli
+
+# 取消锁定
+sudo apt-mark unhold docker-ce docker-ce-cli
+```
